@@ -1,7 +1,8 @@
 class Mammal:
     def __init__(self):
         pass
-    def execute(self):
+    @staticmethod
+    def execute():
         import tensorflow as tf
         import numpy as np
         # [털, 날개] -> 기타, 포유류, 조류
@@ -71,7 +72,7 @@ class Mammal:
 
         # 윗줄까지는 모델학습상태
         # 결과 확인(정확도값)
-        prediction = tf.argmax(model, 1)
+        prediction = tf.argmax(model, 1)  # arg_max 는 예전 표기법. argmax와 결과 차이는 없음
         target = tf.argmax(Y, 1)
         print('예측값: ', sess.run(prediction, {X: x_data}))
         print('실제값: ', sess.run(target, {Y: y_data}))

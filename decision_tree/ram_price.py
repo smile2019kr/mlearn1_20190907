@@ -41,7 +41,7 @@ class RamPrice:
         plt.semilogy(ram_price['date'], pred_lr, label="LINEAR REGRESSION PREDIC", ls=':', dashes=(2, 1))
         plt.semilogy(data_train['date'], data_train['price'], label='TRAINING DATA', alpha=0.4)
         plt.semilogy(data_test['date'], data_test['price'], label='TEST DATA')
-        plt.legend(loc=1)
+        plt.legend(loc=1) # 범례 설정
         plt.xlabel('year', size=15)
         plt.ylabel('price', size=15)
         plt.show()
