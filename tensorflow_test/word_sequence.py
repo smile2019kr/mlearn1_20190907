@@ -47,7 +47,7 @@ class WordSequence:
             # replace = False 면 한번 출력하면 다시 뽑히지 않음
             for i in random_index:
                 random_inputs.append(data[i][0]) # target
-                random_labels.append(data[i][1])
+                random_labels.append([data[i][1]])
 
             return random_inputs, random_labels
 
@@ -60,7 +60,7 @@ class WordSequence:
         voc_size = len(word_list) # 총단어의 갯수
 
         # 모델링
-        input = tf.placeholder(tf.int32, shape=[batch_size])
+        inputs = tf.placeholder(tf.int32, shape=[batch_size])
         labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
         # tf.nn.nce_loss 를 사용하려면 출력값을 이렇게 [batch_size, 1] 로 구성해야 함
         print("embeding_size {}".format(embeding_size))
@@ -79,9 +79,9 @@ class WordSequence:
         """
         selected_embed = tf.nn.embedding_lookup(embedings, inputs) #강아지, 고양이를 뽑아내달라고 입력하면 뽑혀지는 구조
         nce_weight = tf.Variable(tf.random_uniform([voc_size, embeding_size], -1.0, 1.0))
-        nce_bias = tf.Variable(tf.zeros([voc_size])) #절편을 zeros(0,0)으로 설정 -> 절편을 없애겠다는 의미
+        nce_biases = tf.Variable(tf.zeros([voc_size])) #절편을 zeros(0,0)으로 설정 -> 절편을 없애겠다는 의미
         loss = tf.reduce_mean(
-            tf.nn.nce_loss(nce_weight, nce_bias, labels, selected_embed, num_sampled, voc_size)
+            tf.nn.nce_loss(nce_weight, nce_biases, labels, selected_embed, num_sampled, voc_size)
         )
         train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
@@ -90,7 +90,7 @@ class WordSequence:
             sess.run(tf.global_variables_initializer())
             for step in range(1, training_epoch + 1):
                 batch_inputs, batch_labels = random_batch(skip_grams, batch_size)
-                _, loss_val = sess.run([training_epoch, loss],
+                _, loss_val = sess.run([train_op, loss],
                                        {inputs: batch_inputs, labels: batch_labels})
 
                 if step % 10 == 0:
